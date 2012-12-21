@@ -102,11 +102,10 @@ function ding_facetbrowser_form($form, &$form_state, $facets = FALSE, $search = 
     '#type'  => 'hidden',
     '#value' => $search,
   );
-
+  $org = alma_get_organisation();
   foreach (variable_get('ding_facetbrowser_facets', array()) as $configured_facet) {
     if (isset($facets[$configured_facet['name']])) {
       $facet = $facets[$configured_facet['name']];
-
       if (count($facet->terms) > 0) {
         $form[$facet->name] = array(
           '#type'        => 'fieldset',
@@ -118,7 +117,11 @@ function ding_facetbrowser_form($form, &$form_state, $facets = FALSE, $search = 
           $facet_name             = explode('.', $facet->name);
           $element_name           = end($facet_name);
           $facets_string = $facet->name . ':' . $term_name;
-          $term_name_title = $term_name;
+          if($facet->name == 'facet.branch'&& isset($org['branch'][$term_name])) {
+            $term_name_title = $org['branch'][$term_name];
+          } else {
+            $term_name_title = $term_name;
+          }
           // Check if term name is longer than 14 chars,
           // if so, short it down to fit facetbrowser
           $substr_length = 19
